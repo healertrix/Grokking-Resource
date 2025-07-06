@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Grokking the Coding Interview - File Index</title>
+    <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #1a1f2d 0%, #121620 100%);
+            --gradient-card: linear-gradient(160deg, #232733 0%, #1e222d 100%);
+            --gradient-accent: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+            --primary-color: #64748b;
+            --secondary-color: #94a3b8;
+            --background-color: #121620;
+            --card-bg: #1e222d;
+            --text-color: #e2e8f0;
+            --muted-text: #94a3b8;
+            --border-color: #2d3748;
+            --hover-color: #2a303c;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--gradient-primary);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--gradient-card);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .progress-overview {
+            background: var(--gradient-card);
+            padding: 32px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px var(--shadow-color);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-label {
+            color: var(--muted-text);
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 24px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-accent);
+            transition: width 0.5s ease;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .search-container {
+            margin: 20px auto;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .pattern-section {
+            background: var(--gradient-card);
+            margin-bottom: 24px;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .pattern-section.collapsed .file-list {
+            display: none;
+        }
+
+        .file-list {
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .pattern-header {
+            background: var(--gradient-accent);
+            padding: 20px;
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .pattern-header::after {
+            content: '▼';
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            margin-left: 8px;
+        }
+
+        .pattern-section.collapsed .pattern-header::after {
+            transform: rotate(-90deg);
+        }
+
+        .file-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.2s ease;
+        }
+
+        .file-item:hover {
+            background: var(--hover-color);
+        }
+
+        .file-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .file-number {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            min-width: 36px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .file-link {
+            text-decoration: none;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            margin-left: 16px;
+        }
+
+        .custom-checkbox.checked {
+            background: var(--gradient-success);
+            border-color: transparent;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+        }
+
+        .pattern-progress {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-left: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .external-link {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: color 0.2s ease;
+        }
+
+        .external-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .sticky-buttons {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .sticky-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sticky-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .sticky-button::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-right: 12px;
+            padding: 8px 12px;
+            background: var(--card-bg);
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sticky-button:hover::before {
+            opacity: 1;
+        }
+
+        .file-item.completed {
+            opacity: 0.6;
+        }
+
+        .file-item.hidden {
+            display: none;
+        }
+
+        /* ... rest of existing styles ... */
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🚀 Grokking the Coding Interview</h1>
+        <p>Complete Pattern-based Interview Preparation Guide</p>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search patterns or questions..." id="searchInput">
+        </div>
+    </div>
+
+    <div class="progress-overview">
+        <div class="progress-header">
+            <h2 class="progress-title">Your Progress</h2>
+            <div class="pattern-progress" id="overallProgress">0/0 Complete</div>
+        </div>
+
+        <div class="progress-stats">
+            <div class="stat-card">
+                <div class="stat-label">Questions Completed</div>
+                <div class="stat-value" id="completedQuestions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Questions</div>
+                <div class="stat-value" id="totalQuestions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completion Rate</div>
+                <div class="stat-value" id="completionRate">0%</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div class="pattern-section">
+        <div class="pattern-header">
+            2. Pattern Sliding Window
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">1</span>
+                <a class="file-link" href="2. Pattern Sliding Window\001_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">2</span>
+                <a class="file-link" href="2. Pattern Sliding Window\002_2. Maximum Sum Subarray of Size K (easy).html"
+                    target="_blank">
+                    2. Maximum Sum Subarray of Size K (easy)
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">3</span>
+                <a class="file-link"
+                    href="2. Pattern Sliding Window\003_3. Smallest Subarray with a given sum (easy).html"
+                    target="_blank">
+                    3. Smallest Subarray with a given sum (easy)
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">4</span>
+                <a class="file-link"
+                    href="2. Pattern Sliding Window\004_4. Longest Substring with K Distinct Characters (medium).html"
+                    target="_blank">
+                    4. Longest Substring with K Distinct Characters (medium)
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">5</span>
+                <a class="file-link" href="2. Pattern Sliding Window\005_5. Fruits into Baskets (medium).html"
+                    target="_blank">
+                    5. Fruits into Baskets (medium)
+                </a><a href="https://leetcode.com/problems/fruit-into-baskets/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">6</span>
+                <a class="file-link" href="2. Pattern Sliding Window\006_6. No-repeat Substring (hard).html"
+                    target="_blank">
+                    6. No-repeat Substring (hard)
+                </a><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">7</span>
+                <a class="file-link"
+                    href="2. Pattern Sliding Window\007_7. Longest Substring with Same Letters after Replacement (hard).html"
+                    target="_blank">
+                    7. Longest Substring with Same Letters after Replacement (hard)
+                </a><a href="https://leetcode.com/problems/longest-repeating-character-replacement/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">8</span>
+                <a class="file-link"
+                    href="2. Pattern Sliding Window\008_8. Longest Subarray with Ones after Replacement (hard).html"
+                    target="_blank">
+                    8. Longest Subarray with Ones after Replacement (hard)
+                </a><a href="https://leetcode.com/problems/max-consecutive-ones-iii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">9</span>
+                <a class="file-link" href="2. Pattern Sliding Window\009_9. Problem Challenge 1.html" target="_blank">
+                    9. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/permutation-in-string/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">10</span>
+                <a class="file-link" href="2. Pattern Sliding Window\010_10. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/permutation-in-string/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">11</span>
+                <a class="file-link" href="2. Pattern Sliding Window\011_11. Problem Challenge 2.html" target="_blank">
+                    11. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">12</span>
+                <a class="file-link" href="2. Pattern Sliding Window\012_12. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    12. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">13</span>
+                <a class="file-link" href="2. Pattern Sliding Window\013_13. Problem Challenge 3.html" target="_blank">
+                    13. Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/minimum-window-substring/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">14</span>
+                <a class="file-link" href="2. Pattern Sliding Window\014_14. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    14. Solution Review Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/minimum-window-substring/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">15</span>
+                <a class="file-link" href="2. Pattern Sliding Window\015_15. Problem Challenge 4.html" target="_blank">
+                    15. Problem Challenge 4
+                </a><a href="https://leetcode.com/problems/substring-with-concatenation-of-all-words/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">16</span>
+                <a class="file-link" href="2. Pattern Sliding Window\016_16. Solution Review Problem Challenge 4.html"
+                    target="_blank">
+                    16. Solution Review Problem Challenge 4
+                </a><a href="https://leetcode.com/problems/substring-with-concatenation-of-all-words/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            3. Pattern Two Pointers
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">17</span>
+                <a class="file-link" href="3. Pattern Two Pointers\017_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">18</span>
+                <a class="file-link" href="3. Pattern Two Pointers\018_2. Pair with Target Sum (easy).html"
+                    target="_blank">
+                    2. Pair with Target Sum (easy)
+                </a><a href="https://leetcode.com/problems/two-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">19</span>
+                <a class="file-link" href="3. Pattern Two Pointers\019_3. Remove Duplicates (easy).html"
+                    target="_blank">
+                    3. Remove Duplicates (easy)
+                </a><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">20</span>
+                <a class="file-link" href="3. Pattern Two Pointers\020_4. Squaring a Sorted Array (easy).html"
+                    target="_blank">
+                    4. Squaring a Sorted Array (easy)
+                </a><a href="https://leetcode.com/problems/squares-of-a-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">21</span>
+                <a class="file-link" href="3. Pattern Two Pointers\021_5. Triplet Sum to Zero (medium).html"
+                    target="_blank">
+                    5. Triplet Sum to Zero (medium)
+                </a><a href="https://leetcode.com/problems/3sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">22</span>
+                <a class="file-link" href="3. Pattern Two Pointers\022_6. Triplet Sum Close to Target (medium).html"
+                    target="_blank">
+                    6. Triplet Sum Close to Target (medium)
+                </a><a href="https://leetcode.com/problems/3sum-closest/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">23</span>
+                <a class="file-link" href="3. Pattern Two Pointers\023_7. Triplets with Smaller Sum (medium).html"
+                    target="_blank">
+                    7. Triplets with Smaller Sum (medium)
+                </a><a href="https://www.lintcode.com/problem/3sum-smaller/description"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #ff6b35; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LintCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">24</span>
+                <a class="file-link"
+                    href="3. Pattern Two Pointers\024_8. Subarrays with Product Less than a Target (medium).html"
+                    target="_blank">
+                    8. Subarrays with Product Less than a Target (medium)
+                </a><a href="https://leetcode.com/problems/subarray-product-less-than-k/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">25</span>
+                <a class="file-link" href="3. Pattern Two Pointers\025_9. Dutch National Flag Problem (medium).html"
+                    target="_blank">
+                    9. Dutch National Flag Problem (medium)
+                </a><a href="https://coderbyte.com/algorithm/dutch-national-flag-sorting-problem"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #663399; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 CoderByte</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">26</span>
+                <a class="file-link" href="3. Pattern Two Pointers\026_10. Problem Challenge 1.html" target="_blank">
+                    10. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/4sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">27</span>
+                <a class="file-link" href="3. Pattern Two Pointers\027_11. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    11. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/4sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">28</span>
+                <a class="file-link" href="3. Pattern Two Pointers\028_12. Problem Challenge 2.html" target="_blank">
+                    12. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/backspace-string-compare/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">29</span>
+                <a class="file-link" href="3. Pattern Two Pointers\029_13. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    13. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/backspace-string-compare/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">30</span>
+                <a class="file-link" href="3. Pattern Two Pointers\030_14. Problem Challenge 3.html" target="_blank">
+                    14. Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/shortest-unsorted-continuous-subarray/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">31</span>
+                <a class="file-link" href="3. Pattern Two Pointers\031_15. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    15. Solution Review Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/shortest-unsorted-continuous-subarray/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            4. Pattern Fast _ Slow pointers
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">32</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\032_1.Introduction.html" target="_blank">
+                    1.Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">33</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\033_2. LinkedList Cycle (easy).html"
+                    target="_blank">
+                    2. LinkedList Cycle (easy)
+                </a><a href="https://leetcode.com/problems/linked-list-cycle/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">34</span>
+                <a class="file-link"
+                    href="4. Pattern Fast _ Slow pointers\034_3. Start of LinkedList Cycle (medium).html"
+                    target="_blank">
+                    3. Start of LinkedList Cycle (medium)
+                </a><a href="https://leetcode.com/problems/linked-list-cycle-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">35</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\035_4. Happy Number (medium).html"
+                    target="_blank">
+                    4. Happy Number (medium)
+                </a><a href="https://leetcode.com/problems/happy-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">36</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\036_5. Middle of the LinkedList (easy).html"
+                    target="_blank">
+                    5. Middle of the LinkedList (easy)
+                </a><a href="https://leetcode.com/problems/middle-of-the-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">37</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\037_6. Problem Challenge 1.html"
+                    target="_blank">
+                    6. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/palindrome-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">38</span>
+                <a class="file-link"
+                    href="4. Pattern Fast _ Slow pointers\038_7. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    7. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/palindrome-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">39</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\039_8. Problem Challenge 2.html"
+                    target="_blank">
+                    8. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/reorder-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">40</span>
+                <a class="file-link"
+                    href="4. Pattern Fast _ Slow pointers\040_9. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    9. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/reorder-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">41</span>
+                <a class="file-link" href="4. Pattern Fast _ Slow pointers\041_10. Problem Challenge 3.html"
+                    target="_blank">
+                    10. Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/circular-array-loop/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">42</span>
+                <a class="file-link"
+                    href="4. Pattern Fast _ Slow pointers\042_11. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    11. Solution Review Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/circular-array-loop/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            5. Pattern Merge Intervals
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">43</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\043_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">44</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\044_2. Merge Intervals (medium).html"
+                    target="_blank">
+                    2. Merge Intervals (medium)
+                </a><a href="https://leetcode.com/problems/merge-intervals/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">45</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\045_3. Insert Interval (medium).html"
+                    target="_blank">
+                    3. Insert Interval (medium)
+                </a><a href="https://leetcode.com/problems/insert-interval/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">46</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\046_4. Intervals Intersection (medium).html"
+                    target="_blank">
+                    4. Intervals Intersection (medium)
+                </a><a href="https://leetcode.com/problems/interval-list-intersections/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">47</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\047_5. Conflicting Appointments (medium).html"
+                    target="_blank">
+                    5. Conflicting Appointments (medium)
+                </a><a
+                    href="https://www.geeksforgeeks.org/check-if-any-two-intervals-overlap-among-a-given-set-of-intervals/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">48</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\048_6. Problem Challenge 1.html" target="_blank">
+                    6. Problem Challenge 1
+                </a><a href="https://www.lintcode.com/problem/meeting-rooms-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LintCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">49</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\049_7. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    7. Solution Review Problem Challenge 1
+                </a><a href="https://www.lintcode.com/problem/meeting-rooms-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LintCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">50</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\050_8. Problem Challenge 2.html" target="_blank">
+                    8. Problem Challenge 2
+                </a><a href="https://www.geeksforgeeks.org/maximum-cpu-load-from-the-given-list-of-jobs/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">51</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\051_9. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    9. Solution Review Problem Challenge 2
+                </a><a href="https://www.geeksforgeeks.org/maximum-cpu-load-from-the-given-list-of-jobs/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">52</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\052_10. Problem Challenge 3.html" target="_blank">
+                    10. Problem Challenge 3
+                </a><a href="https://www.codertrain.co/employee-free-time"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 CoderTrain</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">53</span>
+                <a class="file-link" href="5. Pattern Merge Intervals\053_11. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    11. Solution Review Problem Challenge 3
+                </a><a href="https://www.codertrain.co/employee-free-time"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 CoderTrain</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            6. Pattern Cyclic Sort
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">54</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\054_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">55</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\055_2. Cyclic Sort (easy).html" target="_blank">
+                    2. Cyclic Sort (easy)
+                </a><a
+                    href="https://www.geeksforgeeks.org/sort-an-array-which-contain-1-to-n-values-in-on-using-cycle-sort/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">56</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\056_3. Find the Missing Number (easy).html"
+                    target="_blank">
+                    3. Find the Missing Number (easy)
+                </a><a href="https://leetcode.com/problems/missing-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">57</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\057_4. Find all Missing Numbers (easy).html"
+                    target="_blank">
+                    4. Find all Missing Numbers (easy)
+                </a><a href="https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">58</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\058_5. Find the Duplicate Number (easy).html"
+                    target="_blank">
+                    5. Find the Duplicate Number (easy)
+                </a><a href="https://leetcode.com/problems/find-the-duplicate-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">59</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\059_6. Find all Duplicate Numbers (easy).html"
+                    target="_blank">
+                    6. Find all Duplicate Numbers (easy)
+                </a><a href="https://leetcode.com/problems/find-all-duplicates-in-an-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">60</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\060_7. Problem Challenge 1.html" target="_blank">
+                    7. Problem Challenge 1
+                </a><a href="https://thecodingsimplified.com/find-currupt-pair/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 TheCodingSimplified</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">61</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\061_8. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    8. Solution Review Problem Challenge 1
+                </a><a href="https://thecodingsimplified.com/find-currupt-pair/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 TheCodingSimplified</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">62</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\062_9. Problem Challenge 2.html" target="_blank">
+                    9. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/first-missing-positive/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">63</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\063_10. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/first-missing-positive/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">64</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\064_11. Problem Challenge 3.html" target="_blank">
+                    11. Problem Challenge 3
+                </a><a href="https://thecodingsimplified.com/find-the-first-k-missing-positive-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 TheCodingSimplified</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">65</span>
+                <a class="file-link" href="6. Pattern Cyclic Sort\065_12. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    12. Solution Review Problem Challenge 3
+                </a><a href="https://thecodingsimplified.com/find-the-first-k-missing-positive-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 TheCodingSimplified</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            7. Pattern In-place Reversal of a LinkedList
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">66</span>
+                <a class="file-link" href="7. Pattern In-place Reversal of a LinkedList\066_1. Introduction.html"
+                    target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">67</span>
+                <a class="file-link"
+                    href="7. Pattern In-place Reversal of a LinkedList\067_2. Reverse a LinkedList (easy).html"
+                    target="_blank">
+                    2. Reverse a LinkedList (easy)
+                </a><a href="https://leetcode.com/problems/reverse-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">68</span>
+                <a class="file-link"
+                    href="7. Pattern In-place Reversal of a LinkedList\068_3. Reverse a Sub-list (medium).html"
+                    target="_blank">
+                    3. Reverse a Sub-list (medium)
+                </a><a href="https://leetcode.com/problems/reverse-linked-list-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">69</span>
+                <a class="file-link"
+                    href="7. Pattern In-place Reversal of a LinkedList\069_4. Reverse every K-element Sub-list (medium).html"
+                    target="_blank">
+                    4. Reverse every K-element Sub-list (medium)
+                </a><a href="https://leetcode.com/problems/reverse-nodes-in-k-group/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">70</span>
+                <a class="file-link" href="7. Pattern In-place Reversal of a LinkedList\070_5. Problem Challenge 1.html"
+                    target="_blank">
+                    5. Problem Challenge 1
+                </a><a href="https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">71</span>
+                <a class="file-link"
+                    href="7. Pattern In-place Reversal of a LinkedList\071_6. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    6. Solution Review Problem Challenge 1
+                </a><a href="https://www.geeksforgeeks.org/reverse-alternate-k-nodes-in-a-singly-linked-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">72</span>
+                <a class="file-link" href="7. Pattern In-place Reversal of a LinkedList\072_7. Problem Challenge 2.html"
+                    target="_blank">
+                    7. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/rotate-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">73</span>
+                <a class="file-link"
+                    href="7. Pattern In-place Reversal of a LinkedList\073_8. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    8. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/rotate-list/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            8. Pattern Tree Breadth First Search
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">74</span>
+                <a class="file-link" href="8. Pattern Tree Breadth First Search\074_1. Introduction.html"
+                    target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">75</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\075_2. Binary Tree Level Order Traversal (easy).html"
+                    target="_blank">
+                    2. Binary Tree Level Order Traversal (easy)
+                </a><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">76</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\076_3. Reverse Level Order Traversal (easy).html"
+                    target="_blank">
+                    3. Reverse Level Order Traversal (easy)
+                </a><a href="https://leetcode.com/problems/binary-tree-level-order-traversal-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">77</span>
+                <a class="file-link" href="8. Pattern Tree Breadth First Search\077_4. Zigzag Traversal (medium).html"
+                    target="_blank">
+                    4. Zigzag Traversal (medium)
+                </a><a href="https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">78</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\078_5. Level Averages in a Binary Tree (easy).html"
+                    target="_blank">
+                    5. Level Averages in a Binary Tree (easy)
+                </a><a href="https://leetcode.com/problems/average-of-levels-in-binary-tree/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">79</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\079_6. Minimum Depth of a Binary Tree (easy).html"
+                    target="_blank">
+                    6. Minimum Depth of a Binary Tree (easy)
+                </a><a href="https://leetcode.com/problems/minimum-depth-of-binary-tree/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">80</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\080_7. Level Order Successor (easy).html"
+                    target="_blank">
+                    7. Level Order Successor (easy)
+                </a><a href="https://www.geeksforgeeks.org/level-order-successor-of-a-node-in-binary-tree/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">81</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\081_8. Connect Level Order Siblings (medium).html"
+                    target="_blank">
+                    8. Connect Level Order Siblings (medium)
+                </a><a href="https://leetcode.com/problems/populating-next-right-pointers-in-each-node/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">82</span>
+                <a class="file-link" href="8. Pattern Tree Breadth First Search\082_9. Problem Challenge 1.html"
+                    target="_blank">
+                    9. Problem Challenge 1
+                </a><a href="https://www.educative.io/m/connect-all-siblings"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 Educative</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">83</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\083_10. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 1
+                </a><a href="https://www.educative.io/m/connect-all-siblings"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 Educative</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">84</span>
+                <a class="file-link" href="8. Pattern Tree Breadth First Search\084_11. Problem Challenge 2.html"
+                    target="_blank">
+                    11. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/binary-tree-right-side-view/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">85</span>
+                <a class="file-link"
+                    href="8. Pattern Tree Breadth First Search\085_12. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    12. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/binary-tree-right-side-view/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            9. Pattern Tree Depth First Search
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">86</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\086_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">87</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\087_2. Binary Tree Path Sum (easy).html"
+                    target="_blank">
+                    2. Binary Tree Path Sum (easy)
+                </a><a href="https://leetcode.com/problems/path-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">88</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\088_3. All Paths for a Sum (medium).html"
+                    target="_blank">
+                    3. All Paths for a Sum (medium)
+                </a><a href="https://leetcode.com/problems/path-sum-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">89</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\089_4. Sum of Path Numbers (medium).html"
+                    target="_blank">
+                    4. Sum of Path Numbers (medium)
+                </a><a href="https://leetcode.com/problems/sum-root-to-leaf-numbers/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">90</span>
+                <a class="file-link"
+                    href="9. Pattern Tree Depth First Search\090_5. Path With Given Sequence (medium).html"
+                    target="_blank">
+                    5. Path With Given Sequence (medium)
+                </a><a href="https://www.geeksforgeeks.org/check-root-leaf-path-given-sequence/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">91</span>
+                <a class="file-link"
+                    href="9. Pattern Tree Depth First Search\091_6. Count Paths for a Sum (medium).html"
+                    target="_blank">
+                    6. Count Paths for a Sum (medium)
+                </a><a href="https://leetcode.com/problems/path-sum-iii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">92</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\092_7. Problem Challenge 1.html"
+                    target="_blank">
+                    7. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/diameter-of-binary-tree/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">93</span>
+                <a class="file-link"
+                    href="9. Pattern Tree Depth First Search\093_8. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    8. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/diameter-of-binary-tree/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">94</span>
+                <a class="file-link" href="9. Pattern Tree Depth First Search\094_9. Problem Challenge 2.html"
+                    target="_blank">
+                    9. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">95</span>
+                <a class="file-link"
+                    href="9. Pattern Tree Depth First Search\095_10. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            10. Pattern Two Heaps
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">96</span>
+                <a class="file-link" href="10. Pattern Two Heaps\096_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">97</span>
+                <a class="file-link"
+                    href="10. Pattern Two Heaps\097_2. Find the Median of a Number Stream (medium).html"
+                    target="_blank">
+                    2. Find the Median of a Number Stream (medium)
+                </a><a href="https://leetcode.com/problems/find-median-from-data-stream/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">98</span>
+                <a class="file-link" href="10. Pattern Two Heaps\098_3. Sliding Window Median (hard).html"
+                    target="_blank">
+                    3. Sliding Window Median (hard)
+                </a><a href="https://leetcode.com/problems/sliding-window-median/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">99</span>
+                <a class="file-link" href="10. Pattern Two Heaps\099_4. Maximize Capital (hard).html" target="_blank">
+                    4. Maximize Capital (hard)
+                </a><a href="https://leetcode.com/problems/ipo/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">100</span>
+                <a class="file-link" href="10. Pattern Two Heaps\100_5. Problem Challenge 1.html" target="_blank">
+                    5. Problem Challenge 1
+                </a><a href="https://www.interviewbit.com/problems/maximum-sum-combinations/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 InterviewBit</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">101</span>
+                <a class="file-link" href="10. Pattern Two Heaps\101_6. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    6. Solution Review Problem Challenge 1
+                </a><a href="https://www.interviewbit.com/problems/maximum-sum-combinations/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 InterviewBit</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            11. Pattern Subsets
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">102</span>
+                <a class="file-link" href="11. Pattern Subsets\102_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">103</span>
+                <a class="file-link" href="11. Pattern Subsets\103_2. Subsets (easy).html" target="_blank">
+                    2. Subsets (easy)
+                </a><a href="https://leetcode.com/problems/subsets/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">104</span>
+                <a class="file-link" href="11. Pattern Subsets\104_3. Subsets With Duplicates (easy).html"
+                    target="_blank">
+                    3. Subsets With Duplicates (easy)
+                </a><a href="https://leetcode.com/problems/subsets-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">105</span>
+                <a class="file-link" href="11. Pattern Subsets\105_4. Permutations (medium).html" target="_blank">
+                    4. Permutations (medium)
+                </a><a href="https://leetcode.com/problems/permutations/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">106</span>
+                <a class="file-link"
+                    href="11. Pattern Subsets\106_5. String Permutations by changing case (medium).html"
+                    target="_blank">
+                    5. String Permutations by changing case (medium)
+                </a><a href="https://leetcode.com/problems/letter-case-permutation/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">107</span>
+                <a class="file-link" href="11. Pattern Subsets\107_6. Balanced Parentheses (hard).html" target="_blank">
+                    6. Balanced Parentheses (hard)
+                </a><a href="https://leetcode.com/problems/generate-parentheses/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">108</span>
+                <a class="file-link" href="11. Pattern Subsets\108_7. Unique Generalized Abbreviations (hard).html"
+                    target="_blank">
+                    7. Unique Generalized Abbreviations (hard)
+                </a><a href="https://leetcode.com/problems/generalized-abbreviation/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">109</span>
+                <a class="file-link" href="11. Pattern Subsets\109_8. Problem Challenge 1.html" target="_blank">
+                    8. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/generalized-abbreviation/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">110</span>
+                <a class="file-link" href="11. Pattern Subsets\110_9. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    9. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/generalized-abbreviation/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">111</span>
+                <a class="file-link" href="11. Pattern Subsets\111_10. Problem Challenge 2.html" target="_blank">
+                    10. Problem Challenge 2
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">112</span>
+                <a class="file-link" href="11. Pattern Subsets\112_11. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    11. Solution Review Problem Challenge 2
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">113</span>
+                <a class="file-link" href="11. Pattern Subsets\113_12. Problem Challenge 3.html" target="_blank">
+                    12. Problem Challenge 3
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">114</span>
+                <a class="file-link" href="11. Pattern Subsets\114_13. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    13. Solution Review Problem Challenge 3
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            12. Pattern Modified Binary Search
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">115</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\115_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">116</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\116_2. Order-agnostic Binary Search (easy).html"
+                    target="_blank">
+                    2. Order-agnostic Binary Search (easy)
+                </a><a href="https://www.geeksforgeeks.org/order-agnostic-binary-search/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">117</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\117_3. Ceiling of a Number (medium).html"
+                    target="_blank">
+                    3. Ceiling of a Number (medium)
+                </a><a href="https://www.geeksforgeeks.org/ceiling-in-a-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">118</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\118_4. Next Letter (medium).html"
+                    target="_blank">
+                    4. Next Letter (medium)
+                </a><a href="https://leetcode.com/problems/find-smallest-letter-greater-than-target/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">119</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\119_5. Number Range (medium).html"
+                    target="_blank">
+                    5. Number Range (medium)
+                </a><a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">120</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\120_6. Search in a Sorted Infinite Array (medium).html"
+                    target="_blank">
+                    6. Search in a Sorted Infinite Array (medium)
+                </a><a href="https://www.geeksforgeeks.org/find-position-element-sorted-array-infinite-numbers/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">121</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\121_7. Minimum Difference Element (medium).html"
+                    target="_blank">
+                    7. Minimum Difference Element (medium)
+                </a><a href="https://www.geeksforgeeks.org/find-closest-number-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">122</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\122_8. Bitonic Array Maximum (easy).html"
+                    target="_blank">
+                    8. Bitonic Array Maximum (easy)
+                </a><a
+                    href="https://www.geeksforgeeks.org/find-the-maximum-element-in-an-array-which-is-first-increasing-and-then-decreasing/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">123</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\123_9. Problem Challenge 1.html"
+                    target="_blank">
+                    9. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/find-in-mountain-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">124</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\124_10. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/find-in-mountain-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">125</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\125_11. Problem Challenge 2.html"
+                    target="_blank">
+                    11. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">126</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\126_12. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    12. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">127</span>
+                <a class="file-link" href="12. Pattern Modified Binary Search\127_13. Problem Challenge 3.html"
+                    target="_blank">
+                    13. Problem Challenge 3
+                </a><a href="https://www.geeksforgeeks.org/find-rotation-count-rotated-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">128</span>
+                <a class="file-link"
+                    href="12. Pattern Modified Binary Search\128_14. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    14. Solution Review Problem Challenge 3
+                </a><a href="https://www.geeksforgeeks.org/find-rotation-count-rotated-sorted-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            13. Pattern Bitwise XOR
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">129</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\129_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">130</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\130_2. Single Number (easy).html" target="_blank">
+                    2. Single Number (easy)
+                </a><a href="https://leetcode.com/problems/single-number/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">131</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\131_3. Two Single Numbers (medium).html"
+                    target="_blank">
+                    3. Two Single Numbers (medium)
+                </a><a href="https://leetcode.com/problems/single-number-iii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">132</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\132_4. Complement of Base 10 Number (medium).html"
+                    target="_blank">
+                    4. Complement of Base 10 Number (medium)
+                </a><a href="https://leetcode.com/problems/complement-of-base-10-integer/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">133</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\133_5. Problem Challenge 1.html" target="_blank">
+                    5. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/flipping-an-image/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">134</span>
+                <a class="file-link" href="13. Pattern Bitwise XOR\134_6. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    6. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/flipping-an-image/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            14. Pattern Top _K_ Elements
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">135</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\135_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">136</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\136_2. Top _K_ Numbers (easy).html"
+                    target="_blank">
+                    2. Top _K_ Numbers (easy)
+                </a><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">137</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\137_3. Kth Smallest Number (easy).html"
+                    target="_blank">
+                    3. Kth Smallest Number (easy)
+                </a><a href="https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">138</span>
+                <a class="file-link"
+                    href="14. Pattern Top _K_ Elements\138_4. _K_ Closest Points to the Origin (easy).html"
+                    target="_blank">
+                    4. _K_ Closest Points to the Origin (easy)
+                </a><a href="https://leetcode.com/problems/k-closest-points-to-origin/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">139</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\139_5. Connect Ropes (easy).html"
+                    target="_blank">
+                    5. Connect Ropes (easy)
+                </a><a href="https://leetcode.com/problems/minimum-cost-to-connect-sticks/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">140</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\140_6. Top _K_ Frequent Numbers (medium).html"
+                    target="_blank">
+                    6. Top _K_ Frequent Numbers (medium)
+                </a><a href="https://leetcode.com/problems/top-k-frequent-elements/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">141</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\141_7. Frequency Sort (medium).html"
+                    target="_blank">
+                    7. Frequency Sort (medium)
+                </a><a href="https://leetcode.com/problems/sort-characters-by-frequency/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">142</span>
+                <a class="file-link"
+                    href="14. Pattern Top _K_ Elements\142_8. Kth Largest Number in a Stream (medium).html"
+                    target="_blank">
+                    8. Kth Largest Number in a Stream (medium)
+                </a><a href="https://leetcode.com/problems/kth-largest-element-in-a-stream/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">143</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\143_9. _K_ Closest Numbers (medium).html"
+                    target="_blank">
+                    9. _K_ Closest Numbers (medium)
+                </a><a href="https://leetcode.com/problems/find-k-closest-elements/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">144</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\144_10. Maximum Distinct Elements (medium).html"
+                    target="_blank">
+                    10. Maximum Distinct Elements (medium)
+                </a><a href="https://www.geeksforgeeks.org/maximum-distinct-elements-removing-k-elements/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">145</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\145_11. Sum of Elements (medium).html"
+                    target="_blank">
+                    11. Sum of Elements (medium)
+                </a><a href="https://www.geeksforgeeks.org/sum-elements-k1th-k2th-smallest-elements/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">146</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\146_12. Rearrange String (hard).html"
+                    target="_blank">
+                    12. Rearrange String (hard)
+                </a><a href="https://leetcode.com/problems/reorganize-string/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">147</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\147_13. Problem Challenge 1.html"
+                    target="_blank">
+                    13. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/rearrange-string-k-distance-apart/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">148</span>
+                <a class="file-link"
+                    href="14. Pattern Top _K_ Elements\148_14. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    14. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/rearrange-string-k-distance-apart/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">149</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\149_15. Problem Challenge 2.html"
+                    target="_blank">
+                    15. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/task-scheduler/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">150</span>
+                <a class="file-link"
+                    href="14. Pattern Top _K_ Elements\150_16. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    16. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/task-scheduler/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">151</span>
+                <a class="file-link" href="14. Pattern Top _K_ Elements\151_17. Problem Challenge 3.html"
+                    target="_blank">
+                    17. Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/maximum-frequency-stack/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">152</span>
+                <a class="file-link"
+                    href="14. Pattern Top _K_ Elements\152_18. Solution Review Problem Challenge 3.html"
+                    target="_blank">
+                    18. Solution Review Problem Challenge 3
+                </a><a href="https://leetcode.com/problems/maximum-frequency-stack/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            15. Pattern K-way merge
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">153</span>
+                <a class="file-link" href="15. Pattern K-way merge\153_1. Introduction.html" target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">154</span>
+                <a class="file-link" href="15. Pattern K-way merge\154_2. Merge K Sorted Lists (medium).html"
+                    target="_blank">
+                    2. Merge K Sorted Lists (medium)
+                </a><a href="https://leetcode.com/problems/merge-k-sorted-lists/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">155</span>
+                <a class="file-link"
+                    href="15. Pattern K-way merge\155_3. Kth Smallest Number in M Sorted Lists (Medium).html"
+                    target="_blank">
+                    3. Kth Smallest Number in M Sorted Lists (Medium)
+                </a><a href="https://www.geeksforgeeks.org/find-m-th-smallest-value-in-k-sorted-arrays/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">156</span>
+                <a class="file-link"
+                    href="15. Pattern K-way merge\156_4. Kth Smallest Number in a Sorted Matrix (Hard).html"
+                    target="_blank">
+                    4. Kth Smallest Number in a Sorted Matrix (Hard)
+                </a><a href="https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">157</span>
+                <a class="file-link" href="15. Pattern K-way merge\157_5. Smallest Number Range (Hard).html"
+                    target="_blank">
+                    5. Smallest Number Range (Hard)
+                </a><a href="https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">158</span>
+                <a class="file-link" href="15. Pattern K-way merge\158_6. Problem Challenge 1.html" target="_blank">
+                    6. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/find-k-pairs-with-smallest-sums/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">159</span>
+                <a class="file-link" href="15. Pattern K-way merge\159_7. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    7. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/find-k-pairs-with-smallest-sums/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            16. Pattern 0 or 1 Knapsack (Dynamic Programming)
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">160</span>
+                <a class="file-link" href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\160_1. Introduction.html"
+                    target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">161</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\161_2. 01 Knapsack (medium).html"
+                    target="_blank">
+                    2. 01 Knapsack (medium)
+                </a><a href="https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">162</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\162_3. Equal Subset Sum Partition (medium).html"
+                    target="_blank">
+                    3. Equal Subset Sum Partition (medium)
+                </a><a href="https://leetcode.com/problems/partition-equal-subset-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">163</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\163_4. Subset Sum (medium).html"
+                    target="_blank">
+                    4. Subset Sum (medium)
+                </a><a href="https://www.geeksforgeeks.org/subset-sum-problem-dp-25/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">164</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\164_5. Minimum Subset Sum Difference (hard).html"
+                    target="_blank">
+                    5. Minimum Subset Sum Difference (hard)
+                </a><a
+                    href="https://www.geeksforgeeks.org/partition-a-set-into-two-subsets-such-that-the-difference-of-subset-sums-is-minimum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #2f8d46; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">165</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\165_6. Problem Challenge 1.html"
+                    target="_blank">
+                    6. Problem Challenge 1
+                </a><a href="https://www.geeksforgeeks.org/count-of-subsets-with-sum-equal-to-x/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">166</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\166_7. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    7. Solution Review Problem Challenge 1
+                </a><a href="https://www.geeksforgeeks.org/count-of-subsets-with-sum-equal-to-x/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 GeeksforGeeks</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">167</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\167_8. Problem Challenge 2.html"
+                    target="_blank">
+                    8. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/target-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">168</span>
+                <a class="file-link"
+                    href="16. Pattern  0 or 1 Knapsack (Dynamic Programming)\168_9. Solution Review_ Problem Challenge 2.html"
+                    target="_blank">
+                    9. Solution Review_ Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/target-sum/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            17. Pattern Topological Sort (Graph)
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">169</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\169_1. Introduction.html"
+                    target="_blank">
+                    1. Introduction
+                </a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">170</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\170_2. Topological Sort (medium).html"
+                    target="_blank">
+                    2. Topological Sort (medium)
+                </a><a href="https://www.youtube.com/watch?v=cIBFEhD77b4"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #ff0000; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 YouTube</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">171</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\171_3. Tasks Scheduling (medium).html"
+                    target="_blank">
+                    3. Tasks Scheduling (medium)
+                </a><a href="https://leetcode.com/problems/course-schedule/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">172</span>
+                <a class="file-link"
+                    href="17. Pattern Topological Sort (Graph)\172_4. Tasks Scheduling Order (medium).html"
+                    target="_blank">
+                    4. Tasks Scheduling Order (medium)
+                </a><a href="https://leetcode.com/problems/course-schedule-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">173</span>
+                <a class="file-link"
+                    href="17. Pattern Topological Sort (Graph)\173_5. All Tasks Scheduling Orders (hard).html"
+                    target="_blank">
+                    5. All Tasks Scheduling Orders (hard)
+                </a><a href="https://leetcode.com/problems/course-schedule-ii/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">174</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\174_6. Alien Dictionary (hard).html"
+                    target="_blank">
+                    6. Alien Dictionary (hard)
+                </a><a href="https://leetcode.com/problems/alien-dictionary/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">175</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\175_7. Problem Challenge 1.html"
+                    target="_blank">
+                    7. Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/sequence-reconstruction/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">176</span>
+                <a class="file-link"
+                    href="17. Pattern Topological Sort (Graph)\176_8. Solution Review Problem Challenge 1.html"
+                    target="_blank">
+                    8. Solution Review Problem Challenge 1
+                </a><a href="https://leetcode.com/problems/sequence-reconstruction/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">177</span>
+                <a class="file-link" href="17. Pattern Topological Sort (Graph)\177_9. Problem Challenge 2.html"
+                    target="_blank">
+                    9. Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/minimum-height-trees/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+            <li class="file-item">
+                <span class="file-number">178</span>
+                <a class="file-link"
+                    href="17. Pattern Topological Sort (Graph)\178_10. Solution Review Problem Challenge 2.html"
+                    target="_blank">
+                    10. Solution Review Problem Challenge 2
+                </a><a href="https://leetcode.com/problems/minimum-height-trees/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+    <div class="pattern-section">
+        <div class="pattern-header">
+            18. Miscellaneous
+        </div>
+        <ul class="file-list">
+            <li class="file-item">
+                <span class="file-number">179</span>
+                <a class="file-link" href="18. Miscellaneous\179_1. Kth Smallest Number (hard).html" target="_blank">
+                    1. Kth Smallest Number (hard)
+                </a><a href="https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/"
+                    style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
+                    target="_blank" rel="noopener">🔗 LeetCode</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sticky-buttons">
+        <button class="sticky-button" id="toggleCompleted" data-tooltip="Toggle Completed">👁️</button>
+        <button class="sticky-button" id="scrollToSearch" data-tooltip="Search">🔍</button>
+    </div>
+
+    <script>
+        // Constants
+        const STORAGE_KEY = 'grokking_progress';
+
+        // Progress tracking
+        function saveProgress(questionId, isCompleted) {
+            const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            if (isCompleted) {
+                progress[questionId] = true;
+            } else {
+                delete progress[questionId];
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+            updateProgressStats();
+        }
+
+        function loadProgress() {
+            const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+                const id = checkbox.dataset.questionId;
+                checkbox.classList.toggle('checked', Boolean(progress[id]));
+            });
+            updateProgressStats();
+        }
+
+        function updateProgressStats() {
+            const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const total = document.querySelectorAll('.custom-checkbox').length || 1; // Prevent division by zero
+            const completed = Object.keys(progress).length;
+            const percentage = Math.round((completed / total) * 100);
+
+            document.getElementById('totalQuestions').textContent = total;
+            document.getElementById('completedQuestions').textContent = completed;
+            document.getElementById('completionRate').textContent = `${percentage}%`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('overallProgress').textContent = `${completed}/${total} Complete`;
+
+            // Update pattern progress
+            document.querySelectorAll('.pattern-section').forEach(section => {
+                const patternCheckboxes = section.querySelectorAll('.custom-checkbox');
+                const patternTotal = patternCheckboxes.length;
+                const patternCompleted = Array.from(patternCheckboxes)
+                    .filter(cb => progress[cb.dataset.questionId]).length;
+                const patternProgress = section.querySelector('.pattern-progress');
+                if (patternProgress) {
+                    patternProgress.textContent = `${patternCompleted}/${patternTotal}`;
+                }
+            });
+        }
+
+        // Search functionality
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+
+                document.querySelectorAll('.pattern-section').forEach(section => {
+                    const items = section.querySelectorAll('.file-item');
+                    let hasVisibleItems = false;
+
+                    items.forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        const matches = text.includes(query);
+                        item.classList.toggle('hidden', !matches);
+                        if (matches) hasVisibleItems = true;
+                    });
+
+                    section.classList.toggle('hidden', !hasVisibleItems);
+
+                    // Don't collapse sections during search
+                    if (query) {
+                        section.classList.remove('collapsed');
+                    }
+                });
+            });
+
+            // Clear search on Escape
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+
+        // Toggle completed items
+        function toggleCompletedItems() {
+            const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const isHiding = !document.body.classList.contains('hide-completed');
+
+            document.body.classList.toggle('hide-completed', isHiding);
+            document.getElementById('toggleCompleted').innerHTML = isHiding ? '👁️‍🗨️' : '👁️';
+
+            // Only hide completed items
+            document.querySelectorAll('.file-item').forEach(item => {
+                const checkbox = item.querySelector('.custom-checkbox');
+                if (checkbox && checkbox.classList.contains('checked')) {
+                    item.classList.toggle('hidden', isHiding);
+                }
+            });
+
+            // Update pattern visibility
+            document.querySelectorAll('.pattern-section').forEach(section => {
+                const visibleItems = section.querySelectorAll('.file-item:not(.hidden)');
+                section.classList.toggle('hidden', visibleItems.length === 0);
+            });
+        }
+
+        function scrollToSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => searchInput.focus(), 500);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            // Make pattern sections collapsible
+            document.querySelectorAll('.pattern-header').forEach(header => {
+                header.addEventListener('click', (e) => {
+                    const section = header.closest('.pattern-section');
+                    section.classList.toggle('collapsed');
+                    e.stopPropagation(); // Prevent event bubbling
+                });
+            });
+
+            // Add checkboxes to questions
+            document.querySelectorAll('.file-item').forEach((item, index) => {
+                const checkbox = document.createElement('div');
+                checkbox.className = 'custom-checkbox';
+                checkbox.dataset.questionId = `q${index}`;
+
+                // Prevent checkbox clicks from triggering collapse
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    checkbox.classList.toggle('checked');
+                    saveProgress(checkbox.dataset.questionId, checkbox.classList.contains('checked'));
+                });
+
+                // Move existing content to a new container
+                const content = document.createElement('div');
+                content.className = 'file-content';
+                while (item.firstChild) {
+                    content.appendChild(item.firstChild);
+                }
+                item.appendChild(content);
+                item.appendChild(checkbox);
+            });
+
+            // Add sticky button handlers
+            document.getElementById('toggleCompleted').addEventListener('click', toggleCompletedItems);
+            document.getElementById('scrollToSearch').addEventListener('click', scrollToSearch);
+
+            // Load saved progress
+            loadProgress();
+            initSearch();
+
+            // Add noopener to external links
+            document.querySelectorAll('a[href^="http"]').forEach(link => {
+                link.setAttribute('rel', 'noopener');
+            });
+        });
+    </script>
+</body>
+
+</html>
