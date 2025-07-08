@@ -117,13 +117,11 @@
             position: relative;
         }
 
-        .progress-bar {
+        #progressBar {
             height: 100%;
-            background: var(--gradient-accent);
-            transition: width 0.5s ease;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
+            background: var(--gradient-success);
+            border-radius: 8px;
+            transition: width 0.3s ease-in-out;
         }
 
         .progress-bar::after {
@@ -2138,7 +2136,7 @@
             const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
             const total = document.querySelectorAll('.custom-checkbox').length || 1; // Prevent division by zero
             const completed = Object.keys(progress).length;
-            const percentage = Math.round((completed / total) * 100);
+            const percentage = ((completed / total) * 100).toFixed(1); // Show one decimal place
 
             document.getElementById('totalQuestions').textContent = total;
             document.getElementById('completedQuestions').textContent = completed;
@@ -2152,9 +2150,10 @@
                 const patternTotal = patternCheckboxes.length;
                 const patternCompleted = Array.from(patternCheckboxes)
                     .filter(cb => progress[cb.dataset.questionId]).length;
+                const patternPercentage = ((patternCompleted / patternTotal) * 100).toFixed(1); // Show one decimal place
                 const patternProgress = section.querySelector('.pattern-progress');
                 if (patternProgress) {
-                    patternProgress.textContent = `${patternCompleted}/${patternTotal}`;
+                    patternProgress.textContent = `${patternCompleted}/${patternTotal} (${patternPercentage}%)`;
                 }
             });
         }
