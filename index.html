@@ -117,11 +117,13 @@
             position: relative;
         }
 
-        #progressBar {
+        .progress-bar {
             height: 100%;
-            background: var(--gradient-success);
-            border-radius: 8px;
-            transition: width 0.3s ease-in-out;
+            background: var(--gradient-accent);
+            transition: width 0.5s ease;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
         }
 
         .progress-bar::after {
@@ -400,7 +402,7 @@
 
     <div class="pattern-section">
         <div class="pattern-header">
-            2. Pattern Sliding Window
+            1. Pattern Sliding Window
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -456,7 +458,7 @@
                     href="2. Pattern Sliding Window\007_7. Longest Substring with Same Letters after Replacement (hard).html"
                     target="_blank">
                     7. Longest Substring with Same Letters after Replacement (hard)
-                </a><a href="https://leetcode.com/problems/longest-repeating-character-replacement/"
+                </a><a href="https://leetcode.com/problems/long-repeating-character-replacement/"
                     style="margin-left: 10px; padding: 3px 8px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; font-weight: bold;"
                     target="_blank" rel="noopener">🔗 LeetCode</a>
             </li>
@@ -542,7 +544,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            3. Pattern Two Pointers
+            2. Pattern Two Pointers
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -679,7 +681,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            4. Pattern Fast _ Slow pointers
+            3. Pattern Fast _ Slow pointers
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -786,7 +788,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            5. Pattern Merge Intervals
+            4. Pattern Merge Intervals
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -887,7 +889,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            6. Pattern Cyclic Sort
+            5. Pattern Cyclic Sort
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -996,7 +998,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            7. Pattern In-place Reversal of a LinkedList
+            6. Pattern In-place Reversal of a LinkedList
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1078,7 +1080,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            8. Pattern Tree Breadth First Search
+            7. Pattern Tree Breadth First Search
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1199,7 +1201,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            9. Pattern Tree Depth First Search
+            8. Pattern Tree Depth First Search
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1297,7 +1299,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            10. Pattern Two Heaps
+            9. Pattern Two Heaps
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1354,7 +1356,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            11. Pattern Subsets
+            10. Pattern Subsets
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1462,7 +1464,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            12. Pattern Modified Binary Search
+            11. Pattern Modified Binary Search
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1599,7 +1601,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            13. Pattern Bitwise XOR
+            12. Pattern Bitwise XOR
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1655,7 +1657,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            14. Pattern Top _K_ Elements
+            13. Pattern Top _K_ Elements
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1826,7 +1828,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            15. Pattern K-way merge
+            14. Pattern K-way merge
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1894,7 +1896,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            16. Pattern 0 or 1 Knapsack (Dynamic Programming)
+            15. Pattern 0 or 1 Knapsack (Dynamic Programming)
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -1989,7 +1991,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            17. Pattern Topological Sort (Graph)
+            16. Pattern Topological Sort (Graph)
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -2088,7 +2090,7 @@
     </div>
     <div class="pattern-section">
         <div class="pattern-header">
-            18. Miscellaneous
+            17. Miscellaneous
         </div>
         <ul class="file-list">
             <li class="file-item">
@@ -2106,6 +2108,10 @@
         <button class="sticky-button" id="toggleCompleted" data-tooltip="Toggle Completed">👁️</button>
         <button class="sticky-button" id="scrollToSearch" data-tooltip="Search">🔍</button>
     </div>
+
+    <footer style="text-align: center; padding: 20px; color: var(--secondary-color); font-size: 0.9rem; margin-top: 40px;">
+        Made with ❤️ by healertrix
+    </footer>
 
     <script>
         // Constants
@@ -2136,7 +2142,7 @@
             const progress = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
             const total = document.querySelectorAll('.custom-checkbox').length || 1; // Prevent division by zero
             const completed = Object.keys(progress).length;
-            const percentage = ((completed / total) * 100).toFixed(1); // Show one decimal place
+            const percentage = Math.round((completed / total) * 100);
 
             document.getElementById('totalQuestions').textContent = total;
             document.getElementById('completedQuestions').textContent = completed;
@@ -2150,10 +2156,9 @@
                 const patternTotal = patternCheckboxes.length;
                 const patternCompleted = Array.from(patternCheckboxes)
                     .filter(cb => progress[cb.dataset.questionId]).length;
-                const patternPercentage = ((patternCompleted / patternTotal) * 100).toFixed(1); // Show one decimal place
                 const patternProgress = section.querySelector('.pattern-progress');
                 if (patternProgress) {
-                    patternProgress.textContent = `${patternCompleted}/${patternTotal} (${patternPercentage}%)`;
+                    patternProgress.textContent = `${patternCompleted}/${patternTotal}`;
                 }
             });
         }
